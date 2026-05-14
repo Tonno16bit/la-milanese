@@ -1,34 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        width: 100%;
-        background: #000; /* optional */
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Memories ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5efe3;
+      --warm-white: #fdfaf4;
+      --tan: #e8dcc8;
+      --brown: #7a5c3a;
+      --dark-brown: #3d2c1a;
+      --amber: #c8873a;
+      --text: #2e1f10;
     }
 
     body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      background-color: var(--cream);
+      font-family: 'Lato', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    img {
-        max-width: 100vw;
-        max-height: 100vh;
-        width: auto;
-        height: auto;
-        object-fit: contain;
-        display: block;
+    /* Film grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
     }
-</style>
+
+    /* ─── HERO ─────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      display: block;
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--amber), transparent);
+      margin: 2rem auto 0;
+    }
+
+    .hero-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: var(--amber);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 700;
+      color: var(--dark-brown);
+      line-height: 1.1;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    .hero-sub {
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem;
+      color: var(--brown);
+      margin-top: 1rem;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    /* ─── GALLERY GRID ──────────────────────────────────── */
+    .gallery {
+      columns: 3 280px;
+      column-gap: 2rem;
+      padding: 3rem 4vw 6rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .card {
+      display: inline-block;
+      width: 100%;
+      break-inside: avoid;
+      margin-bottom: 2rem;
+      cursor: pointer;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .card:nth-child(1)  { animation-delay: 0.05s; }
+    .card:nth-child(2)  { animation-delay: 0.12s; }
+    .card:nth-child(3)  { animation-delay: 0.19s; }
+    .card:nth-child(4)  { animation-delay: 0.26s; }
+    .card:nth-child(5)  { animation-delay: 0.33s; }
+    .card:nth-child(6)  { animation-delay: 0.40s; }
+    .card:nth-child(7)  { animation-delay: 0.47s; }
+    .card:nth-child(8)  { animation-delay: 0.54s; }
+    .card:nth-child(9)  { animation-delay: 0.61s; }
+    .card:nth-child(10) { animation-delay: 0.68s; }
+
+    .polaroid {
+      background: #fffef9;
+      padding: 12px 12px 48px;
+      box-shadow:
+        0 1px 3px rgba(60,30,10,0.12),
+        0 4px 14px rgba(60,30,10,0.1),
+        0 0 0 1px rgba(180,140,90,0.15);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    /* Alternating rotations for that scattered feel */
+    .card:nth-child(odd)  .polaroid { transform: rotate(-1.8deg); }
+    .card:nth-child(even) .polaroid { transform: rotate(1.5deg); }
+    .card:nth-child(3n)   .polaroid { transform: rotate(-0.7deg); }
+    .card:nth-child(5n)   .polaroid { transform: rotate(2.3deg); }
+
+    .card:hover .polaroid {
+      transform: rotate(0deg) scale(1.03) translateY(-6px) !important;
+      box-shadow:
+        0 8px 30px rgba(60,30,10,0.18),
+        0 2px 8px rgba(60,30,10,0.12),
+        0 0 0 1px rgba(180,140,90,0.2);
+      z-index: 10;
+    }
+
+    .polaroid-media {
+      width: 100%;
+      display: block;
+      aspect-ratio: auto;
+      object-fit: cover;
+      background: var(--tan);
+    }
+
+    .polaroid-media.tall    { aspect-ratio: 3/4; }
+    .polaroid-media.wide    { aspect-ratio: 4/3; }
+    .polaroid-media.square  { aspect-ratio: 1/1; }
+
+    .polaroid video {
+      width: 100%;
+      display: block;
+      background: #1a1008;
+    }
+
+    .video-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(200,135,58,0.92);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 400;
+      font-family: 'Lato', sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .polaroid-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Caveat', cursive;
+      font-size: 1.05rem;
+      color: var(--brown);
+      padding: 0 12px;
+      text-align: center;
+    }
+
+    /* ─── LIGHTBOX ──────────────────────────────────────── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 12, 4, 0.92);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .lightbox.open {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .lb-inner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      cursor: default;
+      animation: scaleIn 0.3s cubic-bezier(0.34,1.3,0.64,1);
+    }
+
+    .lb-inner img,
+    .lb-inner video {
+      max-width: 90vw;
+      max-height: 82vh;
+      display: block;
+      border-radius: 2px;
+      object-fit: contain;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+    }
+
+    .lb-caption {
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem;
+      color: rgba(245,239,227,0.85);
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .lb-close {
+      position: fixed;
+      top: 1.5rem;
+      right: 2rem;
+      font-size: 2.5rem;
+      color: rgba(245,239,227,0.7);
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .lb-close:hover { color: #fff; transform: scale(1.15); }
+
+    .lb-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.5rem;
+      color: rgba(245,239,227,0.6);
+      cursor: pointer;
+      padding: 1rem;
+      transition: color 0.2s;
+      user-select: none;
+    }
+
+    .lb-nav:hover { color: #fff; }
+    .lb-prev { left: 1rem; }
+    .lb-next { right: 1rem; }
+
+    /* ─── FOOTER ────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: var(--brown);
+      opacity: 0.8;
+    }
+
+    /* ─── ANIMATIONS ───────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .gallery { columns: 2 150px; column-gap: 1rem; padding: 2rem 1rem 4rem; }
+      .hero { padding: 3rem 1.5rem 2rem; }
+      .lb-nav { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <img src="images.jpeg" alt="Fullscreen Image">
+
+  <!-- ═══════════════════════════════════════════
+       HERO — edit the title and subtitle here
+  ══════════════════════════════════════════════ -->
+  <section class="hero">
+    <p class="hero-label">the highlights reel</p>
+    <h1 class="hero-title">Good <em>Times</em></h1>
+    <p class="hero-sub">us, being absolutely unhinged as usual 📸</p>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       GALLERY
+       To add photos:  <div class="card" data-src="your-photo.jpg" data-caption="your caption">
+       To add videos:  <div class="card" data-type="video" data-src="your-video.mp4" data-caption="your caption">
+
+       aspect ratio classes for the media: "tall" (3:4) | "wide" (4:3) | "square" (1:1)
+  ══════════════════════════════════════════════ -->
+  <main class="gallery" id="gallery">
+
+    <!-- SAMPLE CARDS — replace src with your real files -->
+    <div class="card" data-src="https://picsum.photos/seed/a1/600/800" data-caption="summer vibes ☀️">
+      <div class="polaroid">
+        <img class="polaroid-media tall" src="https://picsum.photos/seed/a1/600/800" alt="summer vibes" loading="lazy" />
+        <span class="polaroid-caption">summer vibes ☀️</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/b2/800/600" data-caption="golden hour crew">
+      <div class="polaroid">
+        <img class="polaroid-media wide" src="https://picsum.photos/seed/b2/800/600" alt="golden hour crew" loading="lazy" />
+        <span class="polaroid-caption">golden hour crew</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/c3/600/600" data-caption="always laughing 😂">
+      <div class="polaroid">
+        <img class="polaroid-media square" src="https://picsum.photos/seed/c3/600/600" alt="always laughing" loading="lazy" />
+        <span class="polaroid-caption">always laughing 😂</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/d4/600/750" data-caption="the best adventure">
+      <div class="polaroid">
+        <img class="polaroid-media tall" src="https://picsum.photos/seed/d4/600/750" alt="the best adventure" loading="lazy" />
+        <span class="polaroid-caption">the best adventure</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/e5/800/600" data-caption="chaotic but iconic 🥂">
+      <div class="polaroid">
+        <img class="polaroid-media wide" src="https://picsum.photos/seed/e5/800/600" alt="chaotic but iconic" loading="lazy" />
+        <span class="polaroid-caption">chaotic but iconic 🥂</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/f6/600/600" data-caption="this one lives in my head rent free">
+      <div class="polaroid">
+        <img class="polaroid-media square" src="https://picsum.photos/seed/f6/600/600" alt="" loading="lazy" />
+        <span class="polaroid-caption">lives rent free in my head</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/g7/600/900" data-caption="you looked so good here 🌸">
+      <div class="polaroid">
+        <img class="polaroid-media tall" src="https://picsum.photos/seed/g7/600/900" alt="" loading="lazy" />
+        <span class="polaroid-caption">you looked so good here 🌸</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/h8/800/600" data-caption="remember this night?!">
+      <div class="polaroid">
+        <img class="polaroid-media wide" src="https://picsum.photos/seed/h8/800/600" alt="" loading="lazy" />
+        <span class="polaroid-caption">remember this night?!</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/i9/600/600" data-caption="the whole squad ❤️">
+      <div class="polaroid">
+        <img class="polaroid-media square" src="https://picsum.photos/seed/i9/600/600" alt="" loading="lazy" />
+        <span class="polaroid-caption">the whole squad ❤️</span>
+      </div>
+    </div>
+
+    <div class="card" data-src="https://picsum.photos/seed/j10/600/800" data-caption="candid perfection">
+      <div class="polaroid">
+        <img class="polaroid-media tall" src="https://picsum.photos/seed/j10/600/800" alt="" loading="lazy" />
+        <span class="polaroid-caption">candid perfection</span>
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ─── LIGHTBOX ──────────────────────────────────── -->
+  <div class="lightbox" id="lightbox">
+    <span class="lb-close" id="lb-close">×</span>
+    <span class="lb-nav lb-prev" id="lb-prev">‹</span>
+    <div class="lb-inner" id="lb-inner">
+      <!-- filled by JS -->
+    </div>
+    <span class="lb-nav lb-next" id="lb-next">›</span>
+  </div>
+
+
+  <footer class="footer">
+    the gang, documented 📷
+  </footer>
+
+
+  <script>
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const lb    = document.getElementById('lightbox');
+    const inner = document.getElementById('lb-inner');
+    let current = 0;
+
+    function openAt(idx) {
+      current = (idx + cards.length) % cards.length;
+      const card = cards[current];
+      const src  = card.dataset.src  || '';
+      const cap  = card.dataset.caption || '';
+      const type = card.dataset.type || 'image';
+
+      inner.innerHTML = '';
+
+      let media;
+      if (type === 'video') {
+        media = document.createElement('video');
+        media.src = src;
+        media.controls = true;
+        media.autoplay = true;
+        media.style.outline = 'none';
+      } else {
+        media = document.createElement('img');
+        media.src = src;
+        media.alt = cap;
+      }
+
+      const caption = document.createElement('p');
+      caption.className = 'lb-caption';
+      caption.textContent = cap;
+
+      inner.appendChild(media);
+      inner.appendChild(caption);
+
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+      const v = inner.querySelector('video');
+      if (v) v.pause();
+      inner.innerHTML = '';
+    }
+
+    cards.forEach((card, i) => card.addEventListener('click', () => openAt(i)));
+
+    document.getElementById('lb-close').addEventListener('click', close);
+    document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); openAt(current - 1); });
+    document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); openAt(current + 1); });
+
+    lb.addEventListener('click', e => { if (e.target === lb) close(); });
+
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape')      close();
+      if (e.key === 'ArrowLeft')   openAt(current - 1);
+      if (e.key === 'ArrowRight')  openAt(current + 1);
+    });
+  </script>
 </body>
 </html>
